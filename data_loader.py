@@ -136,4 +136,4 @@ def load_patient_gene():
 
 def load_assortativity_table():
 
-    return pd.read_excel(config.old_table_path + 'assortativity.xlsx')
+    return pd.read_excel(config.old_table_path + 'assortativity.xlsx', index_col=0)
