@@ -1,11 +1,8 @@
 from networkx.algorithms import community
 import community
 
-from ecg import *
-
-from data_loader import *
-from save_data import save_coms
-
+from community_detection.ecg import *
+import networkx as nx
 
 def community_list_dic(com_dic):
     ans_dic = {}
@@ -27,10 +24,15 @@ def louvain(g):
     return community_list_dic(community.best_partition(g))
 
 
-def consensus(g):
-    g2 = ig.Graph.TupleList(g.edges())
-    coms = g2.community_ecg()
+def consensus(g, ens_size=100):
+    edges, weights = zip(*nx.get_edge_attributes(g, 'weight').items())
 
+    g2 = ig.Graph.TupleList(g.edges())
+    # try:
+    coms = g2.community_ecg(weights=weights, ens_size=ens_size)
+    # except:
+    #     print(g.edges)
+    #     return [list(g.nodes)]
     coms_list = []
     for item in coms:
         com = []
@@ -49,14 +51,17 @@ def hierarchical(network, community_detection_func):
     for com in coms:
         subgraph = network.subgraph(com)
         deep_coms = hierarchical(subgraph, community_detection_func)
+        # deep_coms_sizes = [len(c) for c in deep_coms]
+        # print(f'{len(com)} -> {deep_coms_sizes}')
         for dcom in deep_coms:
             res.append(dcom)
     return res
 
 
-def hierarchical_ensemble(g):
+def hierarchical_ensemble(g, ens_size=100):
     print('ensemble hierarchical')
-    coms = hierarchical(g, consensus)
+    ensemble_func = lambda g: consensus(g, ens_size)
+    coms = hierarchical(g, ensemble_func)
     print('---done---')
     return coms
 
@@ -68,15 +73,4 @@ def hierarchical_louvain(g):
     return coms
 
 
-if __name__ == '__main__':
-    selected_threshold = 0.15
-    experiment_count = 3
 
-    network = load_network(selected_threshold)
-
-    algos = {'louvain': louvain, 'ensemble': consensus,
-             'h_louvain': hierarchical_louvain, 'h_ensemble': hierarchical_ensemble}
-    for i in range(experiment_count):
-        for alg_name in algos:
-            coms = algos[alg_name](network)
-            save_coms(coms, f'{alg_name}_run{i + 3}')
