@@ -9,6 +9,12 @@ igraph
 python-louvain
 openpyxl
 kaleido
+scipy
+
+
+
+
+
 
 
 
