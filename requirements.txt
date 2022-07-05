@@ -10,11 +10,3 @@ python-louvain
 openpyxl
 kaleido
 scipy
-
-
-
-
-
-
-
-

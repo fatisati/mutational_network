@@ -1,6 +1,7 @@
 from scipy.sparse import csr_matrix
 import numpy as np
 import networkx as nx
+import matplotlib.pyplot as plt
 
 
 class MutationalNetwork:
@@ -12,6 +13,7 @@ class MutationalNetwork:
         self.gene_patient = {}
         self.all_genes = set([])
         self.all_patient = set([])
+        self.generate_gene_patient()
 
     def generate_gene_patient(self):
         data = open(self.data_path)
@@ -34,9 +36,19 @@ class MutationalNetwork:
         self.gene_patient[gene].add(patient)
         self.all_patient.add(patient)
 
-    def gene_patient_mat(self):
-        mat = []
+    def remove_rare_genes(self, rare_gene_thr):
+        patient_cnt = len(self.all_patient)
+        filtered_genes = set([])
         for gene in self.all_genes:
+            mutation_ratio = len(self.gene_patient[gene]) / patient_cnt
+            if mutation_ratio >= rare_gene_thr:
+                filtered_genes.add(gene)
+        print(f'number of genese after rare removal: {len(self.all_genes)}')
+        return filtered_genes
+
+    def gene_patient_mat(self, genes):
+        mat = []
+        for gene in genes:
             gene_row = []
             for patient in self.all_patient:
                 exist = (patient in self.gene_patient[gene])
@@ -45,17 +57,16 @@ class MutationalNetwork:
         return np.array(mat)
 
     def generate_network(self, threshold):
-        self.generate_gene_patient()
-        mat = self.gene_patient_mat()
-        transposed = mat.T
+        filtered_genes = self.remove_rare_genes(threshold)
+        mat = self.gene_patient_mat(filtered_genes)
 
-        gene_gene = (csr_matrix(mat) * csr_matrix(transposed)).toarray()
-        print(f'gene-gene: {gene_gene}, min: {gene_gene.min()}, max: {gene_gene.max()}')
+        gene_gene = (csr_matrix(mat) * csr_matrix(mat).transpose()).toarray()
+        print(f'gene-gene: min: {gene_gene.min()}, max: {gene_gene.max()}')
 
         graph = nx.Graph()
-        genes = list(self.all_genes)
-        for i in range(len(self.all_genes)):
-            for j in range(i, len(self.all_genes)):
+        genes = list(filtered_genes)
+        for i in range(len(filtered_genes)):
+            for j in range(i, len(filtered_genes)):
                 if gene_gene[i][j] >= threshold * len(self.all_patient):
                     graph.add_edge(genes[i], genes[j], weight=gene_gene[i][j])
         print(f'graph edge cnt: {len(graph.edges)}, node cnt: {len(graph.nodes)}')
@@ -81,4 +92,4 @@ def make_sample_data(data_folder, n_rows=1000):
 
 if __name__ == '__main__':
     # make_sample_data('../../data/', 1000000)
-    MutationalNetwork('../../data/').generate_network(0.1)
+    MutationalNetwork('../../data/').generate_network(0.15)
