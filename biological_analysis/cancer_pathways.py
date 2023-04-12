@@ -1,3 +1,8 @@
+import utils
+import matplotlib.pyplot as plt
+import seaborn as sns
+from data_loader import DataLoader
+
 class CancerPathways:
     def __init__(self, data_loader):
         self.cancer_pathway_genes = data_loader.load_cancer_pathways_genes()
@@ -10,9 +15,14 @@ class CancerPathways:
                 com_pathways.append(row['pathways'])
         return com_pathways
 
+    def show(self, coms):
+        coms_pathways = [self.find_com_cancer_pathways(com) for com in coms]
+        x, y, data = utils.make_heatmap_data(coms_pathways)
+        sns.heatmap(data)
+        plt.show()
 
 if __name__ == '__main__':
-    cp = CancerPathways('../../../data/')
-    sample = cp.cancer_pathway_genes['genes'].iloc[0]
-    print(sample)
-    print(type(sample))
+    data_loader = DataLoader('/home/fatemeh/my-projects/mutational-network/', '')
+    cp = CancerPathways(data_loader)
+    coms = data_loader.load_com(0.15)
+    cp.show(coms)

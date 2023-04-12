@@ -1,9 +1,8 @@
+import numpy as np
 import pandas as pd
 
 import config
-from old4 import data_loader_old
 import pickle as pkl
-
 
 class Singleton(type):
     _instances = {}
@@ -15,8 +14,9 @@ class Singleton(type):
 
 
 class Dictionary(metaclass=Singleton):
-    def __init__(self):
-        self.gene_name = data_loader_old.load_gene_name_dic()
+    def __init__(self, data_loader):
+        self.data_loader = data_loader
+        self.gene_name = data_loader.load_gene_name_dic()
         self.gene_prot, self.prot_gene = None, None
         self.gene_chromosome = None
         self.gene_type = None
@@ -40,7 +40,7 @@ class Dictionary(metaclass=Singleton):
 
         if not self.prot_gene:
             print('loading prot-gene dic')
-            self.gene_prot, self.prot_gene = data_loader_old.load_gene_prot_dics()
+            self.gene_prot, self.prot_gene = self.data_loader.load_gene_prot_dics()
 
         return get_if_has(self.prot_gene, prot)
 
@@ -53,12 +53,12 @@ class Dictionary(metaclass=Singleton):
 
     def get_gene_chromosome(self, gene_name):
 
-        self.gene_chromosome, chrom = load_find(self.gene_chromosome, data_loader_old.load_gene_list,
+        self.gene_chromosome, chrom = load_find(self.gene_chromosome, self.data_loader.load_gene_list,
                                                 'gene_symbol', gene_name, 'chr')
         return chrom
 
     def get_gene_subtype(self, gene):
-        self.gene_type, subtype = load_find(self.gene_type, data_loader_old.load_gene_list
+        self.gene_type, subtype = load_find(self.gene_type, self.data_loader.load_gene_list
                                             , 'gene_symbol', gene, 'Gene_class')
         return subtype
 
@@ -72,12 +72,12 @@ class Dictionary(metaclass=Singleton):
 
     def get_subtype_fast(self, gene):
         if len(self.fast_subtypes) == 0:
-            self.fast_subtypes = data_loader_old.load_obj(config.fast_subtype_name)
+            self.fast_subtypes = self.data_loader.load_obj(config.fast_subtype_name)
         return self.fast_subtypes[gene]
 
     def get_gene_type_fast(self, gene):
         if len(self.fast_gene_types) == 0:
-            self.fast_gene_types = data_loader_old.load_obj(config.fast_gene_type_name)
+            self.fast_gene_types = self.data_loader.load_obj(config.fast_gene_type_name)
         return self.fast_gene_types[gene]
 
     def generate_network_dic(self, net, node_function):
@@ -131,8 +131,15 @@ def save_obj(obj, name):
     pkl.dump(obj, open(config.dump_path + f'{name}.pkl', 'wb'))
 
 
-if __name__ == '__main__':
-    dic = Dictionary()
-    net = data_loader_old.load_name_network(0.15)
-    node_types = dic.generate_subtype_dic(net)
-    save_obj(node_types, 'net0.15-node-subtypes')
+def make_heatmap_data(data_arr):
+    x_label = []
+    one_hot_data = []
+    flatten = [item for sublist in data_arr for item in sublist]
+    all_data = set(flatten)
+    for index, data in enumerate(data_arr):
+        col = [int(item in data) for item in all_data]
+        if sum(col) != 0:
+            x_label.append(index)
+            one_hot_data.append(col)
+
+    return x_label, list(all_data), np.transpose(np.array(one_hot_data))

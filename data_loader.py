@@ -10,7 +10,8 @@ class DataLoader:
     def __init__(self, data_folder, res_folder):
         self.data_folder = data_folder
         self.res_folder = res_folder
-        self.dic = GeneNameDic(data_folder)
+        self.dic = {}
+        # self.dic = GeneNameDic(data_folder)
 
     def load_network(self, thr):
         net = pkl.load(open(self.data_folder + f'/networks/network{thr}.pkl', 'rb'))
@@ -47,7 +48,7 @@ class DataLoader:
         return dic
 
     def load_cancer_pathways_genes(self):
-        df = pd.read_excel(self.data_folder + 'cancer_pathways.xlsx')
+        df = pd.read_excel(self.data_folder + 'cancer_pathways_genes.xlsx')
         df['genes'] = [ast.literal_eval(genes) for genes in df['genes']]
         return df
 

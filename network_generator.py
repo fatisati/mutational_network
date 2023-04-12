@@ -2,19 +2,20 @@ from scipy.sparse import csr_matrix
 import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
-
+import os
+import pickle
 
 class MutationalNetwork:
-    def __init__(self, data_folder):
+    def __init__(self, data_folder, out_folder, data_name='sample.tsv'):
         self.data_folder = data_folder
-        self.data_path = data_folder + 'sample.tsv'
+        self.data_path = data_folder + data_name
         self.gene_key = 'gene_affected'
         self.patient_key = 'icgc_specimen_id'
         self.gene_patient = {}
         self.all_genes = set([])
         self.all_patient = set([])
         self.generate_gene_patient()
-
+        self.out_folder = out_folder
     def generate_gene_patient(self):
         data = open(self.data_path)
         header = data.readline().split('\t')
@@ -72,8 +73,10 @@ class MutationalNetwork:
         print(f'graph edge cnt: {len(graph.edges)}, node cnt: {len(graph.nodes)}')
         return graph
 
-    def save_network(self):
-        pass
+    def save_network(self, graph, name):
+        save_path = f'{self.out_folder}/network/{name}.pkl'
+        pickle.dump(graph, open(save_path, 'wb'))
+        print(f'graph saved in {save_path}')
 
 
 def make_sample_data(data_folder, n_rows=1000):
@@ -92,4 +95,7 @@ def make_sample_data(data_folder, n_rows=1000):
 
 if __name__ == '__main__':
     # make_sample_data('../../data/', 1000000)
-    MutationalNetwork('../../data/').generate_network(0.15)
+    mutnet = MutationalNetwork('../../data/', 'results')
+    graph = mutnet.generate_network(0.15)
+    mutnet.save_network(graph, 'graph0.15')
+
