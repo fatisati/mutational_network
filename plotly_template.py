@@ -1,5 +1,6 @@
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+import plotly
 
 
 def make_multiple_plots(plots, rows, cols, types, titles, xlabels, ylabels):
@@ -60,3 +61,7 @@ def pie(vals, labels, colors=None):
     if colors:
         fig.update_traces(marker=dict(colors=colors))
     return fig
+
+
+def save(fig, save_path):
+    fig.write_image(f'{save_path}', engine="kaleido")

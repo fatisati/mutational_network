@@ -1,6 +1,6 @@
 import pandas as pd
 from data_loader import DataLoader
-from community_detection import community_detection
+from community import community_detection
 from community_analysis import CommunityAnalysis
 from biological_analysis.ppi.ppi_analysis import PpiAnalysis
 from biological_analysis.string_api import StringApi
@@ -26,7 +26,7 @@ if __name__ == '__main__':
     # all_analysis_df = pd.DataFrame([])
 
     # ensemble_size = 5
-    # coms = community_detection.hierarchical_ensemble(network, ensemble_size)
+    # coms = community.hierarchical_ensemble(network, ensemble_size)
     # data_loader.save_com(0.15, coms)
     # all_analysis_df['coms'] = coms
     coms = data_loader.load_com(0.15)

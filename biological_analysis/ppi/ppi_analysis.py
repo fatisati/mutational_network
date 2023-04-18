@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import random
 import pandas as pd
-import vis_utils
+import visualization
 
 
 def generate_random_network(node_set, node_cnt, link_cnt):
@@ -25,7 +25,7 @@ class PpiAnalysis:
         self.ppi_network = pkl.load(open(self.string_folder + 'interaction_network_medium.pkl', 'rb'))
         print(self.ppi_network.nodes)
         print('done')
-        self.vis = vis_utils.VisUtils(res_path)
+        self.vis = vis_utils.Utils(res_path)
         self.min_path_length = 2
 
     def has_ppi_interaction(self, p1, p2):

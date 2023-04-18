@@ -1,8 +1,10 @@
 from networkx.algorithms import community
 import community
 
-from community_detection.ecg import *
+from ecg import *
 import networkx as nx
+import pickle as pkl
+
 
 def community_list_dic(com_dic):
     ans_dic = {}
@@ -26,13 +28,11 @@ def louvain(g):
 
 def consensus(g, ens_size=100):
     edges, weights = zip(*nx.get_edge_attributes(g, 'weight').items())
-
     g2 = ig.Graph.TupleList(g.edges())
-    # try:
+    # for e in g2.es:
+    #     print(e.source, e.target)
     coms = g2.community_ecg(weights=weights, ens_size=ens_size)
-    # except:
-    #     print(g.edges)
-    #     return [list(g.nodes)]
+
     coms_list = []
     for item in coms:
         com = []
@@ -73,4 +73,12 @@ def hierarchical_louvain(g):
     return coms
 
 
+if __name__ == '__main__':
+    result_path = '../results/'
+    network = pkl.load(open(f'{result_path}/network0.15.pkl', 'rb'))
+    print(len(network.nodes), len(network.edges))
 
+    ensemble_size = 10
+    coms = hierarchical_ensemble(network, 10)
+    save_name = f'h-ensemble{ensemble_size}-coms0.15'
+    pkl.dump(coms, open(f'{result_path}/{save_name}.pkl', 'wb'))

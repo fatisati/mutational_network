@@ -6,6 +6,7 @@ from gene_name_dic import GeneNameDic
 from copy import deepcopy
 import ast
 
+
 class DataLoader:
     def __init__(self, data_folder, res_folder):
         self.data_folder = data_folder
@@ -51,6 +52,7 @@ class DataLoader:
         df = pd.read_excel(self.data_folder + 'cancer_pathways_genes.xlsx')
         df['genes'] = [ast.literal_eval(genes) for genes in df['genes']]
         return df
+
 
 if __name__ == '__main__':
     d = DataLoader('../../data/', '')

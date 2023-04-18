@@ -13,17 +13,20 @@ def show_multiple_imgs(imgs, rows, cols):
     plt.subplots_adjust(wspace=0, hspace=0)
 
 
-class VisUtils:
+class Utils:
     def __init__(self, save_path):
         self.save_path = save_path
 
     def save_plotly(self, fig, name, frmt):
-        fig.write_image(f'{self.save_path}/{frmt}/{name}.{frmt}')
+        fig.write_image(f'{self.save_path}/{name}.{frmt}')
 
     def save_and_show_plotly(self, fig, name):
-        self.save_plotly(fig, name, 'png')
-        self.save_plotly(fig, name, 'svg')
         fig.show()
+        print('saving...')
+        self.save_plotly(fig, name, 'png')
+        # self.save_plotly(fig, name, 'svg')
+        print('done')
+
 
     def save_plt_with_format(self, name, frmt):
         plt.savefig(f'{self.save_path}/{frmt}/{name}.{frmt}')

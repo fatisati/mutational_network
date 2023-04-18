@@ -1,2 +1,6 @@
 __pycache__
 .idea
+venv
+env
+data/simple_somatic_mutation.open.tsv
+results

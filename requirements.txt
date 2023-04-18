@@ -8,5 +8,5 @@ xlrd==1.2.0
 igraph
 python-louvain
 openpyxl
-kaleido
+kaleido==0.1.0post1
 scipy
