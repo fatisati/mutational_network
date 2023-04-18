@@ -59,7 +59,8 @@ class DataPreprocessor:
                 print(
                     f'duplicate names for gene-id: {gene_id}. new-name: {gene_name}, prev-name: {gene_name_dict[gene_id]}')
                 continue
-            gene_name_dict[gene_id] = gene_name
+            # remove double-quote ""
+            gene_name_dict[gene_id] = gene_name[1:-1]
         save_path = self.result_folder + shared_names.gene_name_dic
         pkl.dump(gene_name_dict, open(save_path, 'wb'))
         print(f'gene-name-dict created and saved in {save_path}. number of keys: {len(gene_name_dict)}')

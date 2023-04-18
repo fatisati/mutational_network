@@ -3,4 +3,6 @@ __pycache__
 venv
 env
 data/simple_somatic_mutation.open.tsv
+data/9606.protein.links.v11.5.txt
+data/9606.protein.info.v11.5.txt
 results

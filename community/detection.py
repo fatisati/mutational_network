@@ -78,7 +78,8 @@ if __name__ == '__main__':
     network = pkl.load(open(f'{result_path}/network0.15.pkl', 'rb'))
     print(len(network.nodes), len(network.edges))
 
-    ensemble_size = 10
-    coms = hierarchical_ensemble(network, 10)
+    ensemble_size = 1000
+    coms = hierarchical_ensemble(network, ensemble_size)
+    print(f'number of founded communities: {len(coms)}')
     save_name = f'h-ensemble{ensemble_size}-coms0.15'
     pkl.dump(coms, open(f'{result_path}/{save_name}.pkl', 'wb'))

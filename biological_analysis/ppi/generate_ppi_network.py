@@ -4,9 +4,10 @@ from biological_analysis.string_names import StringNames
 
 
 class PpiNetGenerator:
-    def __init__(self, data_folder):
-        self.data_folder = data_folder + 'stringdb/'
-        self.link_file_path = self.data_folder + '9606.protein.links.v11.5.txt'
+    def __init__(self, data_folder, result_path):
+        # https://string-db.org/cgi/download?sessionId=b0rskhtvOySj&species_text=Homo+sapiens
+        self.link_file_path = data_folder + '9606.protein.links.v11.5.txt'
+        self.result_path = result_path
 
         self.string_names = StringNames(data_folder)
 
@@ -38,10 +39,10 @@ class PpiNetGenerator:
                 print(f'cant split line: --{line}--')
         print(f'done. number of nodes: {len(g.nodes)}, number of edges: {len(g.edges)}')
         print('saving dump...')
-        pkl.dump(g, open(self.data_folder + f'interaction_network_{self.get_score_name(min_score)}.pkl', 'wb'))
+        pkl.dump(g, open(f'{self.result_path}/ppi-net-{self.get_score_name(min_score)}.pkl', 'wb'))
         print('done')
 
 
 if __name__ == '__main__':
-    netgen = PpiNetGenerator('../../../data/')
+    netgen = PpiNetGenerator('../../data/', '../../results/')
     netgen.generate_network(400)

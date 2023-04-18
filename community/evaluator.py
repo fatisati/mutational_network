@@ -60,8 +60,8 @@ class CommunityAnalysis:
         covered_coms = [self.covering_coms(patient) for patient in self.patients]
         self.covered_coms_cnt = [len(coms) for coms in covered_coms]
         results = {'patient': self.patients, 'covered-com-cnt': self.covered_coms_cnt, 'covered-coms': covered_coms}
-        not_covered_patients = covered_coms.count(0)
-        print(f'number of patients not covered by any community: {not_covered_patients}')
+        not_covered_patients = self.covered_coms_cnt.count(0)
+        print(f'number of patients not covered by any community: {not_covered_patients}, ratio: {not_covered_patients / len(self.patients)}')
         pd.DataFrame(results).to_csv(self.result_path + 'patient-com-covered.csv')
 
     def report(self):

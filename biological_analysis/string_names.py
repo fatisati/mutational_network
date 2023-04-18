@@ -1,6 +1,6 @@
 class StringNames:
     def __init__(self, data_folder):
-        self.protein_info_path = data_folder + '/stringdb/9606.protein.info.v11.5.txt'
+        self.protein_info_path = data_folder + '/9606.protein.info.v11.5.txt'
         self.gene_dic = self.generate_gene_dic()
 
     def generate_gene_dic(self):
