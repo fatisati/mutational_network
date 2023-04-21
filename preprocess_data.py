@@ -13,6 +13,7 @@ class DataPreprocessor:
         self.gene_patient = {}
         self.all_genes = set([])
         self.all_patient = set([])
+        self.gene_list = pd.read_excel(self.data_folder + 'genes_list_hg19.xlsx')
 
     def generate_gene_patient(self):
         data = open(self.mutation_path)
@@ -49,10 +50,8 @@ class DataPreprocessor:
         self.all_patient.add(patient)
 
     def generate_gene_name_dict(self):
-        gene_list = pd.read_excel(self.data_folder + 'genes_list_hg19.xlsx')
-
         gene_name_dict = {}
-        for index, row in gene_list.iterrows():
+        for index, row in self.gene_list.iterrows():
             gene_id = row['gene_name']
             gene_name = row['gene_symbol']
             if gene_id in gene_name_dict:
@@ -64,6 +63,25 @@ class DataPreprocessor:
         save_path = self.result_folder + shared_names.gene_name_dic
         pkl.dump(gene_name_dict, open(save_path, 'wb'))
         print(f'gene-name-dict created and saved in {save_path}. number of keys: {len(gene_name_dict)}')
+
+    def generate_gene_loc_dict(self):
+        gene_loc_dic = {}
+        print('generating gene-loc dic...')
+        for _, row in self.gene_list.iterrows():
+            gene = row['gene_symbol'][1:-1]
+            chr = row['chr']
+            start = int(row['start'])
+            end = int(row['end'])
+            strand = row['strand']
+            gene_id = row['gene_name']
+
+            dic_row = {'chr': chr, 'start': start, 'end': end,
+                       'mid': (start + end) / 2, 'strand': strand}
+
+            gene_loc_dic[gene] = dic_row
+            gene_loc_dic[gene_id] = dic_row
+        print('done')
+        pkl.dump(gene_loc_dic, open(self.result_folder + shared_names.gene_location_dict, 'wb'))
 
 
 def make_sample_data(data_folder, n_rows=1000):
@@ -88,4 +106,5 @@ if __name__ == '__main__':
     data_preprocessor = DataPreprocessor(data_folder, result_folder, data_name)
     # data_preprocessor.generate_gene_patient()
     # data_preprocessor.generate_patient_gene()
-    data_preprocessor.generate_gene_name_dict()
+    # data_preprocessor.generate_gene_name_dict()
+    data_preprocessor.generate_gene_loc_dict()
