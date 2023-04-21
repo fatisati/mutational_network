@@ -1,12 +1,9 @@
 import pickle as pkl
 import time
-
-import matplotlib.pyplot as plt
 import networkx as nx
 import random
 import pandas as pd
 import shared_names
-import visualization
 
 
 def generate_random_network(node_set, node_cnt, link_cnt):
