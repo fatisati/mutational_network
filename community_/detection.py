@@ -1,7 +1,7 @@
 from networkx.algorithms import community
 import community
 
-from ecg import *
+from community_.ecg import *
 import networkx as nx
 import pickle as pkl
 

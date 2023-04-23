@@ -3,7 +3,6 @@ import requests  ## python -m pip install requests
 import json
 import pickle as pkl
 import shared_names
-from biological_analysis.string_names import StringNames
 
 
 class StringApi:

@@ -2,6 +2,7 @@ import pickle as pkl
 import shared_names
 import pandas as pd
 from biological_analysis.pubmed.pubmed_api import PubmedApi
+from biological_analysis.ppi.generate_ppi_network import PpiNetGenerator
 
 
 class DataPreprocessor:
@@ -16,6 +17,8 @@ class DataPreprocessor:
         self.all_patient = set([])
         self.gene_list = pd.read_excel(self.data_folder + 'genes_list_hg19.xlsx')
         self.gene_name_dict = None
+
+        print('start preprocessing data...')
 
     def generate_gene_patient(self):
         data = open(self.mutation_path)
@@ -106,6 +109,16 @@ class DataPreprocessor:
                         'cancer-pmids': cancer_pmids, 'cancer-pmid-cnt': len(cancer_pmids),
                         'breast-cancer-pmids': breast_cancer_pmids, 'breast-cancer-pmid-cnt': len(breast_cancer_pmids)})
             pd.DataFrame(res).to_csv(self.result_folder + shared_names.pubmed_cancer)
+
+    def generate_all(self):
+        self.generate_gene_patient()
+        self.generate_patient_gene()
+        self.generate_gene_name_dict()
+        self.generate_gene_loc_dict()
+
+        ppi_network_generator = PpiNetGenerator(self.data_folder, self.result_folder)
+        ppi_network_generator.generate_network(ppi_network_generator.medium_score)
+        # self.generate_pubmed_cancer_df()
 
 
 def make_sample_data(data_folder, n_rows=1000):

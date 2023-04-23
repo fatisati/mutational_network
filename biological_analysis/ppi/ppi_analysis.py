@@ -16,7 +16,7 @@ def generate_random_network(node_set, node_cnt, link_cnt):
 
 class PpiAnalysis:
 
-    def __init__(self, data_folder, confidence_level, result_path):
+    def __init__(self, confidence_level, result_path):
         self.res_path = result_path
         print('loading ppi network...')
         self.ppi_network = pkl.load(open(self.res_path + f'ppi-net-{confidence_level}.pkl', 'rb'))
@@ -91,7 +91,7 @@ class PpiAnalysis:
         res.to_excel(self.res_path + f'ppi-analysis-rand{random_cnt}.xlsx')
         return res
 
-    def network_ppi_links_cnt(self, network):
+    def count_network_ppi_links(self, network):
         ppi_links = self.get_ppi_links(network)
         cnt = len(ppi_links)
         print(f'your network has {cnt} number of ppi links, ratio to all links: {cnt / len(network.edges)}')
@@ -100,8 +100,8 @@ class PpiAnalysis:
 if __name__ == '__main__':
     res_path = '../../results/'
     network = pkl.load(open(f'{res_path}network0.15.pkl', 'rb'))
-    ppi_analyser = PpiAnalysis('../../data/', confidence_level='medium', result_path='../../results/')
-    ppi_analyser.network_ppi_links_cnt(network)
+    ppi_analyser = PpiAnalysis(confidence_level='medium', result_path='../../results/')
+    ppi_analyser.count_network_ppi_links(network)
     print('----')
     coms = pkl.load(open(res_path + 'h-ensemble1000-coms0.15.pkl', 'rb'))
     print(len(coms))

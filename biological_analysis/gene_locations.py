@@ -57,7 +57,7 @@ class GeneLoc:
         link_cnt = len(network.edges)
         print(
             f'the network has {len(cis) / link_cnt} cis and {len(trans) / link_cnt} trans links (ratio to all links). '
-            f'the avg distance between genes of cis links: {dist}, number of links with genes on the same strand: {len(strand) / link_cnt}')
+            f'the avg distance between genes of cis links: {dist}, ratio of links with genes on the same strand: {len(strand) / link_cnt}')
 
         subnet_list = [network.subgraph(com) for com in coms]
         cis_list, trans_list, distance_list, strand_list = [], [], [], []
