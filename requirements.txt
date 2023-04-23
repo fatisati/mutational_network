@@ -10,3 +10,4 @@ python-louvain
 openpyxl
 kaleido==0.1.0post1
 scipy
+pymed
